@@ -8,8 +8,14 @@ import java.util.*;
  */
 public class MultiLoggerImpl implements MultiLogger {
     private final List<Device> devices;
+    private final String  session;
 
     public MultiLoggerImpl() {
+        this("");
+    }
+
+    public MultiLoggerImpl(String session) {
+        this.session = session;
         devices = new ArrayList<>();
     }
 
@@ -87,10 +93,16 @@ public class MultiLoggerImpl implements MultiLogger {
         logDebug(throwable.getMessage());
     }
 
-    protected void log(String message, LogLevel loglevel){
+    protected void log(String message, LogLevel logLevel){
+        Context context = buildContext(message, logLevel);
+
         for (Device device : devices) {
-            device.log(message, loglevel);
+            device.log(context, logLevel);
         }
+    }
+
+    protected Context buildContext(String message, LogLevel logLevel) {
+        return new Context(message, logLevel, session);
     }
 
 

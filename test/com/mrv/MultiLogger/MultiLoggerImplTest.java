@@ -117,6 +117,13 @@ public class MultiLoggerImplTest {
     }
 
     @Test
+    public void testLogCallBuildContext() {
+        logger.logDebug(THROWABLE);
+        verify(logger).buildContext(MESSAGE, LogLevel.DEBUG);
+    }
+
+
+    @Test
     public void testLogCallsDevices() {
         initializeDevices();
         assertAllDevicesHasBeenCalled(LogLevel.FATAL);
@@ -129,10 +136,21 @@ public class MultiLoggerImplTest {
     }
 
     private void assertAllDevicesHasBeenCalled(LogLevel logLevel) {
+        Context context = createContext();
+        when(logger.buildContext(MESSAGE, logLevel)).thenReturn(context);
+
         logger.log(MESSAGE, logLevel);
+        verifyAllDevices(context, logLevel);
+    }
+
+    private void verifyAllDevices(Context context, LogLevel logLevel) {
         for (Device device : devices) {
-            verify(device).log(MESSAGE, logLevel);
+            verify(device).log(context, logLevel);
         }
+    }
+
+    private Context createContext() {
+        return new Context(MESSAGE, LogLevel.DEBUG, "session_some");
     }
 
 }
