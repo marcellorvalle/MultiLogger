@@ -1,7 +1,6 @@
 package com.mrv.MultiLogger;
 
 import org.junit.Test;
-
 import static org.junit.Assert.*;
 
 /**
@@ -9,7 +8,6 @@ import static org.junit.Assert.*;
  */
 public class ContextTest {
     private final String MESSAGE;
-
 
     public ContextTest() {
         MESSAGE = "some message";
