@@ -3,12 +3,16 @@ package com.mrv.MultiLogger;
 import com.mrv.MultiLogger.Devices.Device;
 
 import java.util.*;
+import java.util.function.Consumer;
+
 /**
  *
  */
 public class MultiLoggerImpl implements MultiLogger {
     private final List<Device> devices;
     private final String  session;
+
+    private Consumer<Context> processor;
 
     public MultiLoggerImpl() {
         this("");
@@ -21,6 +25,10 @@ public class MultiLoggerImpl implements MultiLogger {
 
     public void addDevice(Device device) {
         devices.add(device);
+    }
+
+    public void setProcessor(Consumer<Context> processor) {
+        this.processor = processor;
     }
 
     @Override
@@ -102,8 +110,15 @@ public class MultiLoggerImpl implements MultiLogger {
     }
 
     protected Context buildContext(String message, LogLevel logLevel) {
-        return new Context(message, logLevel, session);
+        Context context = new Context(message, logLevel, session);
+        process(context);
+        return context;
     }
 
+    protected void process(Context context) {
+        if (this.processor != null) {
+            this.processor.accept(context);
+        }
+    }
 
 }

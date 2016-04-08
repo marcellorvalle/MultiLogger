@@ -37,4 +37,18 @@ public class Context {
     public String getSession() {
         return session;
     }
+
+    public HashMap<String, Object> getExtraValues() {
+        return (HashMap<String, Object>) extras.clone();
+    }
+
+    public void addExtraValue(String name, Object value) {
+        extras.put(name, value);
+    }
+
+    public boolean hasExtras() {
+        return !extras.isEmpty();
+    }
+
+
 }

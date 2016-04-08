@@ -2,8 +2,11 @@ package com.mrv.MultiLogger;
 
 import java.util.*;
 import com.mrv.MultiLogger.Devices.Device;
+import junit.framework.Assert;
 import org.junit.Test;
 
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**
@@ -122,7 +125,6 @@ public class MultiLoggerImplTest {
         verify(logger).buildContext(MESSAGE, LogLevel.DEBUG);
     }
 
-
     @Test
     public void testLogCallsDevices() {
         initializeDevices();
@@ -133,6 +135,21 @@ public class MultiLoggerImplTest {
         assertAllDevicesHasBeenCalled(LogLevel.MESSAGE);
         assertAllDevicesHasBeenCalled(LogLevel.INFO);
         assertAllDevicesHasBeenCalled(LogLevel.DEBUG);
+    }
+
+    @Test
+    public void testProcessAddExtraValue() {
+        Context localContext = createContext();
+
+        logger.setProcessor(
+            context -> {
+                assertEquals(localContext, context);
+                context.addExtraValue("hasBeenCalled", true);
+            }
+        );
+        logger.process(localContext);
+
+        assertTrue(localContext.getExtraValues().containsKey("hasBeenCalled"));
     }
 
     private void assertAllDevicesHasBeenCalled(LogLevel logLevel) {
